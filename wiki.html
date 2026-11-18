@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#fbf1da">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="가족 기록장">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+<title>가족 기록장</title>
+<style>
+:root{--bg:#fbf1da;--card:#fff;--ink:#3d2f22;--sub:#9a8670;--line:#f1e3c6;--soft:#fff8ea;--sh:#efdfbf;--orange:#e9831f;--sat:env(safe-area-inset-top,0px);--sab:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:'Noto Sans KR','Noto Sans CJK KR','Apple SD Gothic Neo','Malgun Gothic',system-ui,sans-serif}
+button{font:inherit;color:inherit}
+.j{font-family:'Jua',sans-serif;font-weight:400}
+#wrap{max-width:760px;margin:0 auto;padding:calc(var(--sat) + 12px) 14px calc(var(--sab) + 110px)}
+.card{background:var(--card);border-radius:26px;box-shadow:0 7px 0 var(--sh);padding:18px;margin-bottom:18px}
+.ttl{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px}
+.ttl h2{font-family:'Jua',sans-serif;font-weight:400;font-size:25px;margin:0}
+.more{background:none;border:none;color:var(--sub);font-size:16px;cursor:pointer}
+.empty{color:var(--sub);font-size:16px;line-height:1.6}
+.hint{color:var(--sub);font-size:14px;line-height:1.6;margin-top:8px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:4px 2px 14px}
+.top h1{font-family:'Jua',sans-serif;font-weight:400;color:var(--orange);font-size:clamp(28px,7vw,42px);margin:0;line-height:1.1}
+.back{display:inline-flex;align-items:center;gap:6px;background:var(--card);box-shadow:0 5px 0 var(--sh);border-radius:22px;padding:10px 14px;font-family:'Jua',sans-serif;font-size:17px;color:var(--ink);text-decoration:none;flex:none}
+.me{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:0 2px 14px;color:var(--sub);font-size:14px}
+.mb{border:3px solid var(--line);background:var(--card);border-radius:18px;padding:4px 10px;font-family:'Jua',sans-serif;font-size:16px;cursor:pointer}
+.search{display:flex;gap:8px}
+.inp,.box input[type=text],.box input[type=tel],.box input[type=number],.box input[type=date],.box select,.box textarea{width:100%;font:inherit;font-size:17px;border:3px solid var(--line);background:var(--card);color:var(--ink);border-radius:18px;padding:11px 14px}
+.box textarea{min-height:90px;resize:vertical}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.tile{border:3px solid var(--line);background:var(--soft);border-radius:22px;padding:14px 6px;text-align:center;cursor:pointer}
+.tile span{display:block;font-size:34px;line-height:1.2}
+.tile b{font-family:'Jua',sans-serif;font-weight:400;font-size:18px;display:block}
+.tile small{color:var(--sub);font-size:13px}
+.row{display:flex;align-items:center;gap:10px;border:3px solid #efdcae;background:var(--soft);border-radius:20px;padding:10px 14px;margin-bottom:10px;cursor:pointer}
+.row .ic{font-size:26px;flex:none}
+.row .x{flex:1;min-width:0}
+.row .x b{font-family:'Jua',sans-serif;font-weight:400;font-size:19px;display:block;word-break:break-all}
+.row .x small{color:var(--sub);font-size:14px;line-height:1.5;display:block;word-break:break-all}
+.row .n{background:#e3efff;color:#2f6fd6;font-family:'Jua',sans-serif;border-radius:16px;padding:3px 12px;font-size:17px;flex:none}
+.row .act{background:none;border:none;font-size:22px;cursor:pointer;flex:none;text-decoration:none}
+.chk{width:34px;height:34px;border-radius:50%;border:3px solid #e2cea3;background:var(--card);flex:none;cursor:pointer;font-size:18px}
+.need{color:#d46b1f;font-size:13px}
+.tbl{width:100%;border-collapse:collapse;font-size:16px}
+.tbl th{color:var(--sub);font-weight:500;font-size:13px;text-align:left;padding:6px 4px;border-bottom:2px solid var(--line)}
+.tbl td{padding:8px 4px;border-bottom:1px dashed var(--line)}
+.tbl tr{cursor:pointer}
+.opt{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 10px}
+.ob{border:3px solid var(--line);background:var(--card);border-radius:20px;padding:6px 14px;font-family:'Jua',sans-serif;font-size:17px;cursor:pointer}
+.ob.on{border-color:#f5a03a;background:#fff3e0}
+.btn{border:none;border-radius:18px;padding:11px 16px;font-family:'Jua',sans-serif;font-size:18px;cursor:pointer;background:var(--soft);box-shadow:0 4px 0 var(--sh)}
+.btn.pri{background:#f5a03a;color:#fff;box-shadow:0 4px 0 #d07f1c}
+.irow{display:flex;gap:8px;align-items:center}.irow .inp{flex:1;min-width:0}
+.sec{font-family:'Jua',sans-serif;font-size:19px;color:var(--sub);margin:16px 0 8px}
+#nav{position:fixed;left:0;right:0;bottom:0;background:var(--card);box-shadow:0 -3px 14px rgba(120,90,40,.08);display:flex;justify-content:space-around;padding:8px 4px calc(var(--sab) + 8px);z-index:20}
+#nav button{all:unset;flex:1;text-align:center;font-family:'Jua',sans-serif;font-size:clamp(13px,3.4vw,16px);color:var(--sub);cursor:pointer;max-width:140px}
+#nav button span{display:block;font-size:clamp(26px,7vw,32px);line-height:1.15}
+#nav button.on{color:var(--orange)}
+.view{display:none}.view.on{display:block}
+.sheet{position:fixed;inset:0;background:rgba(50,30,10,.45);display:none;align-items:center;justify-content:center;z-index:50;padding:14px}
+.sheet.on{display:flex}
+.box{background:var(--card);border-radius:26px;width:min(560px,100%);max-height:92vh;overflow:auto;padding:20px;box-shadow:0 10px 40px rgba(0,0,0,.25)}
+.box h2{margin:0 0 10px;font-family:'Jua',sans-serif;font-weight:400;font-size:25px}
+.box label{display:block;font-size:13px;color:var(--sub);margin:10px 0 4px}
+.box label.cb{display:flex;gap:8px;align-items:center;font-size:16px;color:var(--ink)}
+.row2{display:flex;gap:8px}.row2>*{flex:1;min-width:0}
+.btns{display:flex;gap:8px;margin-top:18px}
+.btns button{flex:1;border:none;border-radius:16px;padding:14px;font-family:'Jua',sans-serif;font-size:18px;cursor:pointer;background:var(--soft)}
+.btns .pri{background:#f5a03a;color:#fff}.btns .del{background:#ffe3e0;color:#d63a2f;flex:.6}
+#toast{position:fixed;left:50%;bottom:calc(var(--sab) + 100px);transform:translateX(-50%);background:#3d2f22;color:#fff;border-radius:2em;padding:11px 22px;font-weight:700;opacity:0;transition:opacity .3s;z-index:60;pointer-events:none;font-size:16px;max-width:92vw;text-align:center}
+#toast.on{opacity:1}
+mark{background:#ffe08a;border-radius:4px;padding:0 2px}
+@media (min-width:1000px){.tiles{grid-template-columns:repeat(6,1fr)}}
+</style>
+</head>
+<body>
+<div id="wrap">
+  <div class="top"><h1 id="tTitle">📒 가족 기록장</h1><a class="back" href="index.html">🏠 대시보드</a></div>
+  <div class="me" id="tMe"></div>
+  <section class="view on" id="v-home">
+    <div class="card"><div class="search"><input class="inp" id="q" placeholder="🔎 찾기: 에어컨, 예방접종, 치과…"></div><div id="qRes"></div></div>
+    <div class="card"><div class="ttl"><h2>🗓️ 챙길 날 (45일 안)</h2><button class="more" data-go="annual">연간 일정 ›</button></div><div id="hDays"></div></div>
+    <div class="card"><div class="ttl"><h2>🛒 장보기·할 일</h2><button class="more" data-go="shop">전체 ›</button></div><div id="hShop"></div></div>
+    <div class="card"><div class="ttl"><h2>📂 분류</h2></div><div class="tiles" id="hTiles"></div></div>
+    <div class="card"><div class="ttl"><h2>📜 최근 기록</h2><button class="more" data-go="log">전체 ›</button></div><div id="hLog"></div></div>
+  </section>
+  <section class="view" id="v-family"></section>
+  <section class="view" id="v-shop"></section>
+  <section class="view" id="v-contacts"></section>
+  <section class="view" id="v-cat"></section>
+  <section class="view" id="v-log"></section>
+</div>
+<nav id="nav">
+  <button data-t="home" class="on"><span>📒</span>기록장</button>
+  <button data-t="family"><span>👪</span>가족</button>
+  <button data-t="shop"><span>🛒</span>장보기</button>
+  <button data-t="contacts"><span>📞</span>연락처</button>
+  <button data-t="log"><span>📜</span>변경 기록</button>
+</nav>
+<div class="sheet" id="sheet"><div class="box" id="box"></div></div>
+<div id="toast"></div>
+<script>
+'use strict';
+/* =====================================================
+   가족 기록장 — '가족 LLM 위키' 규칙을 웹으로 옮긴 판
+   (원본 불변·지어내지 않기·모르면 확인 필요·나이 대신 생일·
+    민감정보 금지·지울 땐 확인·변경 기록)
+   이 기기에 저장 · 대시보드(index.html)와 장보기·챙길 날 공유
+   ===================================================== */
+const LS = {get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}}, set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const $ = id => document.getElementById(id);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pad = n => String(n).padStart(2,'0');
+const dstr = d => d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate());
+const dayDiff = (a, b) => Math.round((new Date(b.getFullYear(), b.getMonth(), b.getDate()) - new Date(a.getFullYear(), a.getMonth(), a.getDate())) / 86400000);
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+const DOW = ['일','월','화','수','목','금','토'];
+const NEED = '<span class="need">확인 필요</span>';
+function toast(t){ const e = $('toast'); e.textContent = t; e.classList.add('on'); clearTimeout(toast.h); toast.h = setTimeout(() => e.classList.remove('on'), 2400); }
+
+/* ----- 가족 이름: 대시보드 설정이나 선물 링크에서 ----- */
+let FS = LS.get('fb2_set', null);
+(function(){
+  const m = location.hash.match(/g=([A-Za-z0-9_-]+)/); if (!m) return;
+  try { const b = m[1].replace(/-/g,'+').replace(/_/g,'/'); const g = JSON.parse(new TextDecoder().decode(Uint8Array.from(atob(b), c => c.charCodeAt(0)))); LS.set('fw_gift', g); } catch(e){}
+  history.replaceState(null, '', location.pathname);
+})();
+function members(){
+  if (FS && FS.people) return FS.people.map(p => ({id:p.id, label:p.parent ? p.role : p.name, name:p.name || p.role, rel:p.role, emoji:p.emoji, kid:!p.parent}));
+  const g = LS.get('fw_gift', {}) || {}; const p = g.p || [], k = g.k || [];
+  return [{id:'dad', label:'아빠', name:p[0] || '아빠', rel:'아빠', emoji:'🧔'}, {id:'mom', label:'엄마', name:p[1] || '엄마', rel:'엄마', emoji:'👩'},
+    {id:'k1', label:k[0] || '첫째', name:k[0] || '첫째', rel:'첫째', emoji:'🦊', kid:true}, {id:'k2', label:k[1] || '둘째', name:k[1] || '둘째', rel:'둘째', emoji:'🐰', kid:true}];
+}
+const kidsM = () => members().filter(m => m.kid);
+let me = LS.get('fw_me', 'dad');
+const meLabel = () => (members().find(m => m.id === me) || members()[0]).label;
+const title = () => (FS && FS.title) || (LS.get('fw_gift', {}) || {}).t || '우리집';
+
+/* ----- 데이터 ----- */
+const DEF = {people:[], wedding:'', todo:[], contacts:[], entries:[], growth:[], vacc:[], log:[], seeded:0};
+let W = Object.assign(JSON.parse(JSON.stringify(DEF)), LS.get('fw_data', {}));
+if (!W.seeded){ members().forEach(m => W.people.push({id:uid(), group:m.kid ? 'kid' : 'family', name:m.name, rel:m.rel, birth:'', lunar:0, solar:'', memo:''})); W.seeded = 1; }
+const save = () => LS.set('fw_data', W);
+save();
+function log(text){ W.log.unshift({at:Date.now(), text, who:meLabel()}); W.log = W.log.slice(0, 300); }
+// 장보기는 대시보드와 같이 씀
+function shopGet(){ const d = LS.get('fb2_data', {}) || {}; return d.shop || []; }
+function shopSet(list){ const d = LS.get('fb2_data', {}) || {}; d.shop = list; LS.set('fb2_data', d); }
+// 민감정보 막기
+function sensitive(s){
+  s = String(s || '');
+  return /\d{6}\s*-\s*[1-4]\d{6}/.test(s) || /(?:\d{4}[- ]?){3}\d{4}/.test(s) || /(비밀번호|비번|패스워드|password|인증번호|계좌\s*비번)\s*[:=은는]?\s*\S+/i.test(s);
+}
+
+/* ----- 분류 정의 ----- */
+const CATS = {
+  kid:{icon:'👧', name:'아이들', fields:[['kid','아이','kid'],['kind','종류','sel:학교,병원,학원·방과후,기타'],['title','제목','예: 담임 선생님, 소아과'],['date','날짜','date'],['memo','내용','area']]},
+  house:{icon:'🏡', name:'집·생활', fields:[['title','이름','예: 거실 에어컨'],['kind','종류','sel:가전,가구,수리,계약,관리,기타'],['date','구입·작업일','date'],['model','모델·업체',''],['tel','AS·연락처','tel'],['until','보증·계약 만료','date'],['memo','메모','area']]},
+  annual:{icon:'📅', name:'연간 일정', fields:[['title','무엇','예: 자동차세, 보험 갱신'],['md','날짜(월·일)','md'],['lunar','음력이에요','check'],['solar','올해 양력 날짜 (음력일 때)','date'],['memo','메모','area']]},
+  health:{icon:'🩺', name:'건강', fields:[['date','날짜','date'],['who','누구','who'],['place','병원',''],['title','내용','예: 건강검진, 치과'],['next','다음 예약','date'],['memo','메모','area']]},
+  car:{icon:'🚗', name:'차', fields:[['date','날짜','date'],['title','내용','예: 엔진오일 교체'],['km','주행거리(km)','num'],['place','업체',''],['cost','금액(원)','num'],['memo','메모','area']]},
+  trip:{icon:'✈️', name:'여행', fields:[['title','어디','예: 제주도'],['date','출발','date'],['until','도착','date'],['status','상태','sel:계획 중,다녀옴'],['memo','메모·준비물','area']]}
+};
+const sub = e => { const c = CATS[e.cat]; return c.fields.filter(f => !['title','memo','lunar'].includes(f[0]) && e[f[0]]).map(f => f[2] === 'kid' ? kidName(e[f[0]]) : f[2] === 'who' ? whoName(e[f[0]]) : f[2] === 'md' ? mdText(e) : e[f[0]]).join(' · '); };
+const kidName = id => (members().find(m => m.id === id) || {}).name || id;
+const whoName = id => (members().find(m => m.id === id) || {}).name || id;
+const mdText = e => e.md ? (+e.md.slice(0,2)) + '월 ' + (+e.md.slice(3,5)) + '일' + (e.lunar ? ' (음력)' : '') : '';
+
+/* ----- 챙길 날 (대시보드도 같은 규칙으로 읽어요) ----- */
+function ageOf(birth){ if (!birth) return ''; const b = new Date(birth + 'T00:00'), t = new Date(); let a = t.getFullYear() - b.getFullYear(); if (t.getMonth() < b.getMonth() || (t.getMonth() === b.getMonth() && t.getDate() < b.getDate())) a--; return a >= 0 ? '만 ' + a + '세' : ''; }
+function nextOf(md, from){ const y = from.getFullYear(); for (const yy of [y, y + 1]){ const d = new Date(yy, +md.slice(0,2) - 1, +md.slice(3,5)); if (dayDiff(from, d) >= 0) return d; } return null; }
+function careDays(days){
+  const from = new Date(); const out = [];
+  const add = (d, t, ic, extra) => { if (!d) return; const diff = dayDiff(from, d); if (diff >= 0 && diff <= days) out.push({d, diff, t, ic, extra}); };
+  W.people.forEach(p => {
+    const elder = p.group === 'elder'; const nm = elder ? p.name + '님' : p.name;
+    if (!p.late && p.birth){ if (!p.lunar) add(nextOf(p.birth.slice(5), from), nm + (elder ? ' 생신' : ' 생일'), '🎂'); else if (p.solar) add(new Date(p.solar + 'T00:00'), nm + (elder ? ' 생신' : ' 생일') + ' (음력)', '🎂'); else add(nextOf(p.birth.slice(5), from), nm + ' 생신 음력 ' + (+p.birth.slice(5,7)) + '/' + (+p.birth.slice(8,10)) + ' · 올해 양력 확인 필요', '🎂'); }
+    if (p.late && p.mday){ if (!p.mlunar) add(nextOf(p.mday, from), '故 ' + p.name + '님 기일', '🕯️'); else if (p.msolar) add(new Date(p.msolar + 'T00:00'), '故 ' + p.name + '님 기일 (음력)', '🕯️'); else add(nextOf(p.mday, from), '故 ' + p.name + '님 기일 음력 · 올해 양력 확인 필요', '🕯️'); }
+  });
+  if (W.wedding){ const d = nextOf(W.wedding.slice(5), from); if (d) add(d, '결혼기념일 ' + (d.getFullYear() - +W.wedding.slice(0,4)) + '주년', '💍'); }
+  W.entries.forEach(e => {
+    if (e.cat === 'annual' && e.md){ if (e.lunar && e.solar) add(new Date(e.solar + 'T00:00'), e.title + ' (음력)', '📅'); else add(nextOf(e.md, from), e.title + (e.lunar ? ' · 음력, 올해 양력 확인 필요' : ''), '📅'); }
+    if (e.cat === 'house' && e.until) add(new Date(e.until + 'T00:00'), e.title + ' 보증·계약 만료', '🏡');
+    if (e.cat === 'health' && e.next) add(new Date(e.next + 'T00:00'), whoName(e.who) + ' ' + (e.place || '병원') + ' 예약', '🩺');
+    if (e.cat === 'trip' && e.date && e.status !== '다녀옴') add(new Date(e.date + 'T00:00'), e.title + ' 여행 출발', '✈️');
+  });
+  return out.sort((a, b) => a.diff - b.diff);
+}
+const dayRow = u => `<div class="row" style="cursor:default"><span class="ic">${u.ic}</span><div class="x"><b>${esc(u.t)}</b><small>${u.d.getMonth()+1}/${u.d.getDate()}(${DOW[u.d.getDay()]})</small></div><span class="n">${u.diff === 0 ? '오늘' : 'D-' + u.diff}</span></div>`;
+
+/* ----- 홈 ----- */
+function renderTop(){
+  $('tTitle').textContent = '📒 ' + title() + ' 기록장';
+  $('tMe').innerHTML = '지금 쓰는 사람 ' + members().map(m => `<button class="mb" data-me="${m.id}" style="${m.id === me ? 'border-color:#f5a03a;background:#fff3e0' : ''}">${m.emoji} ${esc(m.label)}</button>`).join('');
+  document.querySelectorAll('[data-me]').forEach(b => b.onclick = () => { me = b.dataset.me; LS.set('fw_me', me); renderTop(); });
+}
+function renderHome(){
+  const ds = careDays(45);
+  $('hDays').innerHTML = ds.length ? ds.slice(0, 6).map(dayRow).join('') : `<div class="empty">45일 안에 챙길 날이 없어요. 👪 가족에서 생일·생신을 적어 두면 자동으로 떠요.</div>`;
+  const shop = shopGet();
+  $('hShop').innerHTML = `<div class="hint" style="margin:0 0 8px">장보기 ${shop.filter(s => !s.done).length}개 · 할 일 ${W.todo.length}개</div>` +
+    (shop.filter(s => !s.done).slice(0, 6).map(s => `<span class="mb" style="display:inline-block;margin:0 6px 6px 0;cursor:default">${esc(s.text)}</span>`).join('') || '') +
+    `<div class="irow" style="margin-top:6px"><input class="inp" id="hShopIn" placeholder="장보기에 추가 (예: 우유, 계란)"><button class="btn pri" id="hShopAdd">추가</button></div>`;
+  $('hShopAdd').onclick = () => addShop($('hShopIn').value); $('hShopIn').onkeydown = e => { if (e.key === 'Enter') addShop($('hShopIn').value); };
+  const tiles = [['family','👪','가족 구성원', W.people.length], ['shop','🛒','장보기·할 일', shopGet().filter(s => !s.done).length + W.todo.length], ['contacts','📞','연락처', W.contacts.length],
+    ...Object.entries(CATS).map(([k, c]) => [k, c.icon, c.name, W.entries.filter(e => e.cat === k).length + (k === 'kid' ? W.growth.length + W.vacc.length : 0)])];
+  $('hTiles').innerHTML = tiles.map(t => `<div class="tile" data-go="${t[0]}"><span>${t[1]}</span><b>${t[2]}</b><small>${t[3]}개</small></div>`).join('');
+  $('hLog').innerHTML = W.log.length ? W.log.slice(0, 5).map(l => `<div class="hint" style="margin:0 0 4px">${new Date(l.at).getMonth()+1}/${new Date(l.at).getDate()} ${esc(l.text)} (${esc(l.who)})</div>`).join('') : `<div class="empty">아직 기록이 없어요</div>`;
+  bindGo();
+}
+$('q').oninput = () => renderSearch();
+function renderSearch(){
+  const q = $('q').value.trim(); if (!q){ $('qRes').innerHTML = ''; return; }
+  const hl = s => esc(s).replace(new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi'), m => `<mark>${m}</mark>`);
+  const hit = o => Object.values(o).some(v => typeof v === 'string' && v.toLowerCase().includes(q.toLowerCase()));
+  const res = [];
+  W.people.filter(hit).forEach(p => res.push(['👪', p.name + (p.group === 'elder' ? '님' : ''), (p.rel || '') + (p.birth ? ' · ' + p.birth : ''), () => editPerson(p)]));
+  W.contacts.filter(hit).forEach(c => res.push(['📞', c.name, (c.tel || '') + (c.why ? ' · ' + c.why : ''), () => editContact(c)]));
+  W.entries.filter(hit).forEach(e => res.push([CATS[e.cat].icon, e.title, sub(e) + (e.memo ? ' · ' + e.memo : ''), () => editEntry(e.cat, e)]));
+  W.vacc.filter(hit).forEach(v => res.push(['💉', kidName(v.kid) + ' ' + v.name, v.date + ' · ' + (v.dose || '') + ' · ' + (v.clinic || ''), () => editVacc(v)]));
+  W.todo.filter(hit).forEach(t => res.push(['✅', t.text, '할 일', () => go('shop')]));
+  shopGet().filter(hit).forEach(s => res.push(['🛒', s.text, '장보기', () => go('shop')]));
+  $('qRes').innerHTML = res.length ? '<div style="margin-top:12px"></div>' + res.slice(0, 30).map((r, i) => `<div class="row" data-r="${i}"><span class="ic">${r[0]}</span><div class="x"><b>${hl(r[1])}</b><small>${hl(r[2])}</small></div></div>`).join('')
+    : `<div class="hint">기록장에는 아직 없어요. 알게 되면 적어 두세요 ✍️</div>`;
+  document.querySelectorAll('#qRes [data-r]').forEach(el => el.onclick = () => res[+el.dataset.r][3]());
+}
+
+/* ----- 가족 구성원 ----- */
+function renderFamily(){
+  const fam = W.people.filter(p => p.group !== 'elder'), eld = W.people.filter(p => p.group === 'elder');
+  const prow = p => { const elder = p.group === 'elder'; const nm = (p.late ? '故 ' : '') + p.name + (elder ? '님' : '');
+    let s = (p.rel || '관계 ' + NEED);
+    if (p.late) s += ' · 기일 ' + (p.mday ? (+p.mday.slice(0,2)) + '월 ' + (+p.mday.slice(3,5)) + '일' + (p.mlunar ? ' (음력)' : '') : NEED);
+    else s += ' · ' + (elder ? '생신 ' : '생일 ') + (p.birth ? p.birth + (p.lunar ? ' (음력)' : '') + (!p.lunar ? ' · ' + ageOf(p.birth) : '') : NEED);
+    return `<div class="row" data-p="${p.id}"><span class="ic">${p.late ? '🕯️' : elder ? '🧓' : p.group === 'kid' ? '🧒' : '🙂'}</span><div class="x"><b>${esc(nm)}</b><small>${s}${p.memo ? ' · ' + esc(p.memo) : ''}</small></div></div>`; };
+  $('v-family').innerHTML = `<div class="card"><div class="ttl"><h2>👪 가족 구성원</h2></div><div class="hint" style="margin:0 0 6px">나이는 적지 않아요. 생일로 오늘 기준 자동 계산해요. 음력 생일·생신은 '음력'에 체크해요.</div>
+    <div class="sec">우리 가족</div>${fam.map(prow).join('')}<button class="btn" id="fAdd">＋ 식구 추가</button>
+    <div class="sec">양가 어른들</div>${eld.map(prow).join('') || '<div class="empty">아직 없어요. 성함·생신(음력)·기일을 적어 두면 챙길 날에 떠요.</div>'}<button class="btn" id="elderAdd">＋ 어른 추가</button>
+    <div class="sec">결혼일</div><div class="irow"><input class="inp" type="date" id="wed" value="${esc(W.wedding)}"><button class="btn pri" id="wedSave">저장</button></div>${W.wedding ? '' : '<div class="hint">' + NEED + '</div>'}</div>`;
+  document.querySelectorAll('[data-p]').forEach(el => el.onclick = () => editPerson(W.people.find(p => p.id === el.dataset.p)));
+  $('fAdd').onclick = () => editPerson(null, 'family'); $('elderAdd').onclick = () => editPerson(null, 'elder');
+  $('wedSave').onclick = () => { W.wedding = $('wed').value; log('수정 | 결혼일'); save(); toast('결혼일을 적었어요'); renderFamily(); };
+}
+function editPerson(p, group){
+  const x = p ? Object.assign({}, p) : {id:uid(), group:group || 'family', name:'', rel:'', birth:'', lunar:0, solar:'', late:0, mday:'', mlunar:0, msolar:'', memo:''};
+  const elder = x.group === 'elder';
+  openBox(`<h2>${p ? '고치기' : (elder ? '어른 추가' : '식구 추가')}</h2>
+    <div class="row2"><div><label>${elder ? '성함' : '이름'}</label><input type="text" id="pN" value="${esc(x.name)}"></div><div><label>관계</label><input type="text" id="pR" placeholder="${elder ? '예: 친할머니, 장인어른' : '예: 아빠, 첫째'}" value="${esc(x.rel)}"></div></div>
+    ${elder ? `<label class="cb"><input type="checkbox" id="pL" ${x.late ? 'checked' : ''}> 작고하셨어요 (생신 대신 기일)</label>` : ''}
+    <div id="bBox"><label>${elder ? '생신' : '생일'}</label><input type="date" id="pB" value="${esc(x.birth)}"><label class="cb"><input type="checkbox" id="pLu" ${x.lunar ? 'checked' : ''}> 음력이에요</label>
+      <label>올해 양력 날짜 (음력일 때 · 모르면 비워 두기)</label><input type="date" id="pS" value="${esc(x.solar)}"></div>
+    ${elder ? `<div id="mBox"><label>기일 (월-일, 예: 03-15)</label><input type="text" id="pM" placeholder="MM-DD" value="${esc(x.mday)}"><label class="cb"><input type="checkbox" id="pML" ${x.mlunar ? 'checked' : ''}> 음력이에요</label><label>올해 양력 날짜 (음력일 때)</label><input type="date" id="pMS" value="${esc(x.msolar)}"></div>` : ''}
+    <label>메모</label><input type="text" id="pMemo" value="${esc(x.memo)}">
+    <div class="hint">모르는 건 비워 두세요. 틀린 값이 빈칸보다 나빠요.</div>
+    <div class="btns">${p ? '<button class="del" id="bDel">지우기</button>' : ''}<button id="bC">닫기</button><button class="pri" id="bOk">저장</button></div>`, () => {
+    const sync = () => { if (!elder) return; const late = $('pL').checked; $('bBox').style.display = late ? 'none' : ''; $('mBox').style.display = late ? '' : 'none'; };
+    if (elder){ $('pL').onchange = sync; sync(); }
+    $('bC').onclick = closeBox;
+    if (p) $('bDel').onclick = () => confirmDel(`${p.name} 기록을 지울까요?`, () => { W.people = W.people.filter(y => y.id !== p.id); log('삭제 | 가족 구성원 ' + p.name); save(); closeBox(); renderAll(); });
+    $('bOk').onclick = () => {
+      const vals = {name:$('pN').value.trim(), rel:$('pR').value.trim(), birth:$('pB').value, lunar:$('pLu').checked ? 1 : 0, solar:$('pS').value, memo:$('pMemo').value.trim()};
+      if (elder) Object.assign(vals, {late:$('pL').checked ? 1 : 0, mday:$('pM').value.trim(), mlunar:$('pML').checked ? 1 : 0, msolar:$('pMS').value});
+      if (!vals.name){ $('pN').focus(); return; }
+      if (vals.mday && !/^\d{2}-\d{2}$/.test(vals.mday)){ toast('기일은 03-15처럼 적어요'); return; }
+      if (Object.values(vals).some(sensitive)){ toast('보안상 기록장에는 안 적을게요 🔒'); return; }
+      Object.assign(x, vals); if (W.people.some(y => y.id === x.id)) W.people = W.people.map(y => y.id === x.id ? x : y); else W.people.push(x); log((p ? '수정' : '추가') + ' | 가족 구성원 ' + x.name); save(); closeBox(); renderAll(); toast('적었어요 · 👪 가족 구성원');
+    };
+  });
+}
+
+/* ----- 장보기·할 일 ----- */
+function addShop(text){
+  const items = String(text || '').split(',').map(s => s.trim()).filter(Boolean); if (!items.length) return;
+  if (items.some(sensitive)){ toast('보안상 기록장에는 안 적을게요 🔒'); return; }
+  const list = shopGet(); items.forEach(t => list.push({id:uid(), text:t, who:meLabel(), done:false})); shopSet(list); toast('장보기에 넣었어요 🛒'); renderAll();
+}
+function renderShop(){
+  const shop = shopGet().filter(s => !s.done);
+  $('v-shop').innerHTML = `<div class="card"><div class="ttl"><h2>🛒 장보기</h2></div><div class="hint" style="margin:0 0 10px">샀으면 ✓ 누르면 바로 지워져요. 대시보드 장보기와 같은 목록이에요.</div>
+    ${shop.map(s => `<div class="row" style="cursor:default"><button class="chk" data-buy="${s.id}">✓</button><div class="x"><b>${esc(s.text)}</b>${s.who ? `<small>${esc(s.who)}</small>` : ''}</div></div>`).join('') || '<div class="empty">비어 있어요</div>'}
+    <div class="irow" style="margin-top:8px"><input class="inp" id="sIn" placeholder="우유, 계란…"><button class="btn pri" id="sAdd">추가</button></div></div>
+    <div class="card"><div class="ttl"><h2>✅ 할 일</h2></div>
+    ${W.todo.map(t => `<div class="row" style="cursor:default"><button class="chk" data-done="${t.id}">✓</button><div class="x"><b>${esc(t.text)}</b><small>${esc(t.who || '')}${t.due ? ' · ~' + (+t.due.slice(5,7)) + '/' + (+t.due.slice(8,10)) : ''}</small></div></div>`).join('') || '<div class="empty">할 일이 없어요</div>'}
+    <div class="irow" style="margin-top:8px"><input class="inp" id="tIn" placeholder="예: 관리비 내기"><input class="inp" type="date" id="tDue" style="flex:.6"><button class="btn pri" id="tAdd">추가</button></div></div>`;
+  $('sAdd').onclick = () => addShop($('sIn').value); $('sIn').onkeydown = e => { if (e.key === 'Enter') addShop($('sIn').value); };
+  document.querySelectorAll('[data-buy]').forEach(b => b.onclick = () => { shopSet(shopGet().filter(s => s.id !== b.dataset.buy)); renderAll(); });
+  $('tAdd').onclick = () => { const t = $('tIn').value.trim(); if (!t) return; if (sensitive(t)){ toast('보안상 기록장에는 안 적을게요 🔒'); return; } W.todo.push({id:uid(), text:t, who:meLabel(), due:$('tDue').value}); save(); renderAll(); };
+  document.querySelectorAll('[data-done]').forEach(b => b.onclick = () => { W.todo = W.todo.filter(t => t.id !== b.dataset.done); save(); renderAll(); });
+}
+
+/* ----- 연락처 ----- */
+function renderContacts(){
+  const list = W.contacts.slice().sort((a, b) => a.name.localeCompare(b.name, 'ko'));
+  $('v-contacts').innerHTML = `<div class="card"><div class="ttl"><h2>📞 연락처</h2><button class="btn pri" id="cAdd">＋ 추가</button></div><div class="hint" style="margin:0 0 10px">병원·AS센터·관리사무소·보험사처럼 업체 연락처를 모아요.</div>
+    ${list.map(c => `<div class="row" data-c="${c.id}"><span class="ic">📇</span><div class="x"><b>${esc(c.name)}</b><small>${esc(c.tel || '')}${c.why ? ' · ' + esc(c.why) : ''}${c.memo ? ' · ' + esc(c.memo) : ''}</small></div>${c.tel ? `<a class="act" href="tel:${esc(c.tel.replace(/[^\d+]/g, ''))}" onclick="event.stopPropagation()">📞</a>` : ''}</div>`).join('') || '<div class="empty">아직 없어요. 예) 소아과, 에어컨 AS, 관리사무소</div>'}</div>`;
+  $('cAdd').onclick = () => editContact(null);
+  document.querySelectorAll('[data-c]').forEach(el => el.onclick = () => editContact(W.contacts.find(c => c.id === el.dataset.c)));
+}
+function editContact(c){
+  const x = c ? Object.assign({}, c) : {id:uid(), name:'', tel:'', why:'', memo:''};
+  openBox(`<h2>📞 ${c ? '연락처 고치기' : '연락처 추가'}</h2><label>이름</label><input type="text" id="cN" placeholder="예: 우리소아과" value="${esc(x.name)}">
+    <label>전화</label><input type="tel" id="cT" value="${esc(x.tel)}"><label>무엇 때문에</label><input type="text" id="cW" placeholder="예: 아이 감기, 에어컨 AS" value="${esc(x.why)}">
+    <label>메모</label><input type="text" id="cM" value="${esc(x.memo)}">
+    <div class="btns">${c ? '<button class="del" id="bDel">지우기</button>' : ''}<button id="bC">닫기</button><button class="pri" id="bOk">저장</button></div>`, () => {
+    $('bC').onclick = closeBox;
+    if (c) $('bDel').onclick = () => confirmDel(`${c.name} 연락처를 지울까요?`, () => { W.contacts = W.contacts.filter(y => y.id !== c.id); log('삭제 | 연락처 ' + c.name); save(); closeBox(); renderAll(); });
+    $('bOk').onclick = () => { const v = {name:$('cN').value.trim(), tel:$('cT').value.trim(), why:$('cW').value.trim(), memo:$('cM').value.trim()}; if (!v.name){ $('cN').focus(); return; }
+      if (Object.values(v).some(sensitive)){ toast('보안상 기록장에는 안 적을게요 🔒'); return; }
+      Object.assign(x, v); W.contacts = W.contacts.filter(y => y.id !== x.id).concat(x); log((c ? '수정' : '추가') + ' | 연락처 ' + x.name); save(); closeBox(); renderAll(); toast('적었어요 · 📞 연락처'); };
+  });
+}
+
+/* ----- 분류 (아이들·집·연간 일정·건강·차·여행) ----- */
+let cat = 'house', kidSel = null;
+function renderCat(){
+  const c = CATS[cat]; let list = W.entries.filter(e => e.cat === cat);
+  let extra = '';
+  if (cat === 'kid'){
+    const ks = kidsM(); if (!kidSel || !ks.find(k => k.id === kidSel)) kidSel = (ks[0] || {}).id;
+    list = list.filter(e => e.kid === kidSel);
+    const gr = W.growth.filter(g => g.kid === kidSel).sort((a, b) => b.date.localeCompare(a.date)); const va = W.vacc.filter(v => v.kid === kidSel).sort((a, b) => b.date.localeCompare(a.date));
+    extra = `<div class="opt">${ks.map(k => `<button class="ob ${k.id === kidSel ? 'on' : ''}" data-kid="${k.id}">${k.emoji} ${esc(k.name)}</button>`).join('')}</div>
+      <div class="sec">📏 성장 기록 <button class="btn" id="gAdd" style="font-size:15px;padding:6px 12px;margin-left:6px">＋</button></div>
+      ${gr.length ? `<table class="tbl"><tr><th>날짜</th><th>키(cm)</th><th>몸무게(kg)</th></tr>${gr.map(g => `<tr data-g="${g.id}"><td>${g.date}</td><td>${g.h || '-'}</td><td>${g.w || '-'}</td></tr>`).join('')}</table>` : '<div class="empty">아직 없어요</div>'}
+      <div class="hint">성장 백분위는 어림하지 않아요. 걱정되면 병원에서 정확히 재 보세요.</div>
+      <div class="sec">💉 예방접종 <button class="btn" id="vAdd" style="font-size:15px;padding:6px 12px;margin-left:6px">＋</button></div>
+      ${va.length ? va.map(v => `<div class="row" data-v="${v.id}"><span class="ic">💉</span><div class="x"><b>${esc(v.name)} ${esc(v.dose || '')}</b><small>${v.date}${v.clinic ? ' · ' + esc(v.clinic) : ''}</small></div></div>`).join('') : '<div class="empty">아직 없어요</div>'}
+      <div class="sec">🏫 학교·병원·학원 메모</div>`;
+  }
+  list.sort((a, b) => (b.date || b.md || '').localeCompare(a.date || a.md || ''));
+  if (cat === 'annual') list.sort((a, b) => (a.md || '').localeCompare(b.md || ''));
+  $('v-cat').innerHTML = `<div class="card"><div class="ttl"><h2>${c.icon} ${c.name}</h2><button class="btn pri" id="catAdd">＋ 추가</button></div>${extra}
+    ${list.map(e => `<div class="row" data-e="${e.id}"><span class="ic">${c.icon}</span><div class="x"><b>${esc(e.title || '(제목 없음)')}</b><small>${esc(sub(e))}${e.memo ? ' · ' + esc(e.memo) : ''}</small></div></div>`).join('') || '<div class="empty">아직 없어요</div>'}
+    ${cat === 'annual' ? `<div class="sec">👪 가족 구성원에서 자동으로</div>${careDays(366).filter(u => ['🎂','🕯️','💍'].includes(u.ic)).map(dayRow).join('') || '<div class="empty">가족 구성원에 생일·생신·기일을 적으면 여기 같이 보여요</div>'}` : ''}</div>`;
+  $('catAdd').onclick = () => editEntry(cat, null);
+  document.querySelectorAll('[data-e]').forEach(el => el.onclick = () => editEntry(cat, W.entries.find(e => e.id === el.dataset.e)));
+  if (cat === 'kid'){
+    document.querySelectorAll('[data-kid]').forEach(b => b.onclick = () => { kidSel = b.dataset.kid; renderCat(); });
+    $('gAdd').onclick = () => editGrowth(null); $('vAdd').onclick = () => editVacc(null);
+    document.querySelectorAll('[data-g]').forEach(el => el.onclick = () => editGrowth(W.growth.find(g => g.id === el.dataset.g)));
+    document.querySelectorAll('[data-v]').forEach(el => el.onclick = () => editVacc(W.vacc.find(v => v.id === el.dataset.v)));
+  }
+}
+function fieldHTML(f, e){
+  const [k, label, type] = f; const v = e[k] == null ? '' : e[k];
+  if (type === 'area') return `<label>${label}</label><textarea data-f="${k}">${esc(v)}</textarea>`;
+  if (type === 'date') return `<label>${label}</label><input type="date" data-f="${k}" value="${esc(v)}">`;
+  if (type === 'num') return `<label>${label}</label><input type="number" data-f="${k}" value="${esc(v)}">`;
+  if (type === 'tel') return `<label>${label}</label><input type="tel" data-f="${k}" value="${esc(v)}">`;
+  if (type === 'check') return `<label class="cb"><input type="checkbox" data-f="${k}" ${v ? 'checked' : ''}> ${label}</label>`;
+  if (type === 'md') return `<label>${label}</label><div class="row2"><select data-f="md_m">${Array.from({length:12}, (_, i) => `<option value="${pad(i+1)}" ${v.slice(0,2) === pad(i+1) ? 'selected' : ''}>${i+1}월</option>`).join('')}</select><select data-f="md_d">${Array.from({length:31}, (_, i) => `<option value="${pad(i+1)}" ${v.slice(3,5) === pad(i+1) ? 'selected' : ''}>${i+1}일</option>`).join('')}</select></div>`;
+  if (type === 'kid') return `<label>${label}</label><select data-f="${k}">${kidsM().map(m => `<option value="${m.id}" ${(v || kidSel) === m.id ? 'selected' : ''}>${esc(m.name)}</option>`).join('')}</select>`;
+  if (type === 'who') return `<label>${label}</label><select data-f="${k}">${members().map(m => `<option value="${m.id}" ${v === m.id ? 'selected' : ''}>${esc(m.name)} (${esc(m.rel)})</option>`).join('')}<option value="elders" ${v === 'elders' ? 'selected' : ''}>부모님·어른들</option></select>`;
+  if (type.startsWith('sel:')) return `<label>${label}</label><select data-f="${k}">${type.slice(4).split(',').map(o => `<option ${v === o ? 'selected' : ''}>${o}</option>`).join('')}</select>`;
+  return `<label>${label}</label><input type="text" data-f="${k}" placeholder="${type ? esc(type) : ''}" value="${esc(v)}">`;
+}
+function editEntry(ct, e){
+  const c = CATS[ct]; const x = e ? Object.assign({}, e) : {id:uid(), cat:ct};
+  openBox(`<h2>${c.icon} ${e ? '고치기' : c.name + ' 추가'}</h2>${c.fields.map(f => fieldHTML(f, x)).join('')}
+    <div class="hint">날짜·금액·이름은 정확하게, 모르면 비워 두세요.</div>
+    <div class="btns">${e ? '<button class="del" id="bDel">지우기</button>' : ''}<button id="bC">닫기</button><button class="pri" id="bOk">저장</button></div>`, box => {
+    $('bC').onclick = closeBox;
+    if (e) $('bDel').onclick = () => confirmDel(`'${e.title || c.name}' 기록을 지울까요?`, () => { W.entries = W.entries.filter(y => y.id !== e.id); log('삭제 | ' + c.name + ' ' + (e.title || '')); save(); closeBox(); renderAll(); });
+    $('bOk').onclick = () => {
+      const v = {}; box.querySelectorAll('[data-f]').forEach(el => { const k = el.dataset.f; v[k] = el.type === 'checkbox' ? (el.checked ? 1 : 0) : el.value.trim(); });
+      if (v.md_m){ v.md = v.md_m + '-' + v.md_d; delete v.md_m; delete v.md_d; }
+      if (!v.title && ct !== 'health'){ toast('제목(이름)을 적어 주세요'); return; }
+      if (Object.values(v).some(sensitive)){ toast('보안상 기록장에는 안 적을게요 🔒'); return; }
+      Object.assign(x, v, {updated:dstr(new Date())}); W.entries = W.entries.filter(y => y.id !== x.id).concat(x); log((e ? '수정' : '추가') + ' | ' + c.name + ' ' + (x.title || ''));
+      save(); closeBox(); renderAll(); toast(`적었어요 · ${c.icon} ${c.name}`);
+    };
+  });
+}
+function editGrowth(g){
+  const x = g ? Object.assign({}, g) : {id:uid(), kid:kidSel, date:dstr(new Date()), h:'', w:''};
+  openBox(`<h2>📏 ${esc(kidName(x.kid))} 성장 기록</h2><label>날짜</label><input type="date" id="gD" value="${esc(x.date)}"><div class="row2"><div><label>키(cm)</label><input type="number" step="0.1" id="gH" value="${esc(x.h)}"></div><div><label>몸무게(kg)</label><input type="number" step="0.1" id="gW" value="${esc(x.w)}"></div></div>
+    <div class="btns">${g ? '<button class="del" id="bDel">지우기</button>' : ''}<button id="bC">닫기</button><button class="pri" id="bOk">저장</button></div>`, () => {
+    $('bC').onclick = closeBox;
+    if (g) $('bDel').onclick = () => confirmDel('이 성장 기록을 지울까요?', () => { W.growth = W.growth.filter(y => y.id !== g.id); log('삭제 | 성장 기록 ' + kidName(g.kid) + ' ' + g.date); save(); closeBox(); renderAll(); });
+    $('bOk').onclick = () => { x.date = $('gD').value; x.h = $('gH').value; x.w = $('gW').value; if (!x.date || (!x.h && !x.w)){ toast('날짜와 키·몸무게를 적어요'); return; }
+      W.growth = W.growth.filter(y => y.id !== x.id).concat(x); log((g ? '수정' : '추가') + ' | 성장 기록 ' + kidName(x.kid) + ' ' + x.date); save(); closeBox(); renderAll(); toast('적었어요 · 📏 성장 기록'); };
+  });
+}
+function editVacc(v){
+  const x = v ? Object.assign({}, v) : {id:uid(), kid:kidSel, date:dstr(new Date()), name:'', dose:'', clinic:''};
+  openBox(`<h2>💉 ${esc(kidName(x.kid))} 예방접종</h2><label>날짜</label><input type="date" id="vD" value="${esc(x.date)}"><div class="row2"><div><label>백신</label><input type="text" id="vN" placeholder="예: 독감" value="${esc(x.name)}"></div><div><label>차수</label><input type="text" id="vO" placeholder="예: 2차" value="${esc(x.dose)}"></div></div>
+    <label>병원</label><input type="text" id="vC" value="${esc(x.clinic)}">
+    <div class="btns">${v ? '<button class="del" id="bDel">지우기</button>' : ''}<button id="bC">닫기</button><button class="pri" id="bOk">저장</button></div>`, () => {
+    $('bC').onclick = closeBox;
+    if (v) $('bDel').onclick = () => confirmDel('이 접종 기록을 지울까요?', () => { W.vacc = W.vacc.filter(y => y.id !== v.id); log('삭제 | 예방접종 ' + kidName(v.kid) + ' ' + v.name); save(); closeBox(); renderAll(); });
+    $('bOk').onclick = () => { x.date = $('vD').value; x.name = $('vN').value.trim(); x.dose = $('vO').value.trim(); x.clinic = $('vC').value.trim(); if (!x.name){ $('vN').focus(); return; }
+      W.vacc = W.vacc.filter(y => y.id !== x.id).concat(x); log((v ? '수정' : '추가') + ' | 예방접종 ' + kidName(x.kid) + ' ' + x.name + ' ' + x.dose); save(); closeBox(); renderAll(); toast('적었어요 · 💉 예방접종'); };
+  });
+}
+
+/* ----- 변경 기록 ----- */
+function renderLog(){
+  $('v-log').innerHTML = `<div class="card"><div class="ttl"><h2>📜 변경 기록</h2></div><div class="hint" style="margin:0 0 10px">누가 언제 무엇을 적고 지웠는지 남아요. (장보기·할 일은 자주 바뀌어서 남기지 않아요)</div>
+    ${W.log.map(l => `<div class="hint" style="margin:0 0 6px">${dstr(new Date(l.at))} ${esc(l.text)} (${esc(l.who)})</div>`).join('') || '<div class="empty">아직 없어요</div>'}
+    <div class="sec">💾 옮기기·백업</div><div class="hint" style="margin:0 0 8px">이 기기에 저장돼요. 새 기기로 옮길 땐 코드를 복사해서 붙여넣어요.</div>
+    <div class="irow"><button class="btn" id="bkOut">📋 백업 코드 복사</button><button class="btn" id="bkIn">📥 불러오기</button></div></div>`;
+  $('bkOut').onclick = async () => { const code = btoa(unescape(encodeURIComponent(JSON.stringify(W)))); try { await navigator.clipboard.writeText(code); toast('복사했어요'); } catch(e){ openBox(`<h2>백업 코드</h2><textarea style="min-height:160px" readonly>${code}</textarea><div class="btns"><button onclick="closeBox()">닫기</button></div>`); } };
+  $('bkIn').onclick = () => openBox(`<h2>불러오기</h2><textarea id="bkT" placeholder="백업 코드 붙여넣기" style="min-height:120px"></textarea><div class="btns"><button id="bC">닫기</button><button class="pri" id="bOk">불러오기</button></div>`, () => {
+    $('bC').onclick = closeBox; $('bOk').onclick = () => { try { const o = JSON.parse(decodeURIComponent(escape(atob($('bkT').value.trim())))); if (!o.people) throw 0; W = Object.assign(JSON.parse(JSON.stringify(DEF)), o); save(); closeBox(); renderAll(); toast('불러왔어요'); } catch(e){ toast('코드가 올바르지 않아요'); } };
+  });
+}
+
+/* ----- 공통 ----- */
+function openBox(html, ready){ $('box').innerHTML = html; $('sheet').classList.add('on'); ready && ready($('box')); }
+function closeBox(){ $('sheet').classList.remove('on'); }
+$('sheet').addEventListener('click', e => { if (e.target.id === 'sheet') closeBox(); });
+function confirmDel(msg, fn){ openBox(`<h2>🗑️ 지울까요?</h2><div style="font-size:17px;line-height:1.6">${esc(msg)}</div><div class="hint">지운 내용은 변경 기록에 남아요.</div><div class="btns"><button id="bC">아니요</button><button class="del" id="bY" style="flex:1">지울게요</button></div>`, () => { $('bC').onclick = closeBox; $('bY').onclick = () => { fn(); toast('지웠어요'); }; }); }
+let tab = 'home';
+function go(t){
+  if (CATS[t]){ cat = t; t = 'cat'; }
+  tab = t; document.querySelectorAll('.view').forEach(v => v.classList.toggle('on', v.id === 'v-' + t));
+  document.querySelectorAll('#nav button').forEach(b => b.classList.toggle('on', b.dataset.t === t)); window.scrollTo(0, 0); renderAll();
+}
+document.querySelectorAll('#nav button').forEach(b => b.onclick = () => go(b.dataset.t));
+function bindGo(){ document.querySelectorAll('[data-go]').forEach(b => b.onclick = () => go(b.dataset.go)); }
+function renderAll(){ FS = LS.get('fb2_set', null); renderTop(); if (tab === 'home'){ renderHome(); renderSearch(); } else if (tab === 'family') renderFamily(); else if (tab === 'shop') renderShop(); else if (tab === 'contacts') renderContacts(); else if (tab === 'cat') renderCat(); else if (tab === 'log') renderLog(); }
+window.addEventListener('storage', e => { if (e.key === 'fb2_data' || e.key === 'fb2_set' || e.key === 'fw_data'){ if (e.key === 'fw_data') W = Object.assign(JSON.parse(JSON.stringify(DEF)), LS.get('fw_data', {})); renderAll(); } });
+renderAll();
+</script>
+</body>
+</html>

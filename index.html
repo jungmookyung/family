@@ -211,7 +211,7 @@ body.night .cd.today{background:#3a2c1c}
   <section class="view on" id="v-home">
     <div class="top">
       <div><h1 id="hTitle">우리집 대시보드</h1><div class="d" id="hDate"></div></div>
-      <div class="rbtns"><button class="rbtn" data-go="time" title="사용 시간">⏱️</button><button class="rbtn" data-go="mail" title="우체통">💌</button><button class="rbtn" data-go="admin" title="관리">⚒️</button></div>
+      <div class="rbtns"><a class="rbtn" href="wiki.html" title="가족 기록장" style="text-decoration:none">📒</a><button class="rbtn" data-go="mail" title="우체통">💌</button><button class="rbtn" data-go="admin" title="관리">⚒️</button></div>
     </div>
     <div id="hShout"></div>
     <div class="grid2">
@@ -261,7 +261,7 @@ body.night .cd.today{background:#3a2c1c}
     <div class="card" id="aAlarm"></div>
     <div class="card"><div class="ttl"><h2>📢 태블릿에 한마디</h2></div><div class="irow"><input class="inp" id="aShout" placeholder="예: 숙제 먼저 하고 놀기!"><button class="btn pri" id="aShoutOn">띄우기</button><button class="btn" id="aShoutOff">내리기</button></div></div>
     <div class="card"><div class="ttl"><h2>🛒 장보기</h2></div><div id="aShop"></div><div class="irow" style="margin-top:10px"><input class="inp" id="aShopIn" placeholder="우유, 계란…"><button class="btn pri" id="aShopAdd">추가</button></div></div>
-    <div class="card"><div class="ttl"><h2>⚡ 빠른 메뉴</h2></div><div class="brow"><button class="btn pri" id="aSet">⚙️ 가족·학교 설정</button><button class="btn" id="aFull">⛶ 전체화면</button><button class="btn" id="aVoice">🔊 소리 확인</button><button class="btn" id="aBackup">💾 옮기기·백업</button></div></div>
+    <div class="card"><div class="ttl"><h2>⚡ 빠른 메뉴</h2></div><div class="brow"><button class="btn pri" id="aSet">⚙️ 가족·학교 설정</button><a class="btn" href="wiki.html" style="text-decoration:none">📒 가족 기록장</a><button class="btn" id="aFull">⛶ 전체화면</button><button class="btn" id="aVoice">🔊 소리 확인</button><button class="btn" id="aBackup">💾 옮기기·백업</button></div></div>
   </section>
 </div>
 <nav id="nav">
@@ -427,7 +427,23 @@ function upcoming(days){
     eventsOn(d).filter(e => e.kind !== 'acad').forEach(e => out.push({d, diff:i, e}));
   }
   S.ddays.forEach(x => { const d = new Date(x.date + 'T00:00'); const diff = dayDiff(today, d); if (diff >= 0) out.push({d, diff, e:{kind:'dday', title:x.name, who:'all', id:'dd' + x.date + x.name}}); });
+  wikiCare(days || 60).forEach(u => out.push(u));
   return out.sort((a, b) => a.diff - b.diff);
+}
+
+/* ===== 가족 기록장(wiki.html)에 적은 생일·생신·기일·기념일 ===== */
+function wikiCare(days){
+  const F = LS.get('fw_data', null); if (!F) return [];
+  const from = new Date(); const out = [];
+  const nextOf = md => { for (const yy of [from.getFullYear(), from.getFullYear() + 1]){ const d = new Date(yy, +md.slice(0,2) - 1, +md.slice(3,5)); if (dayDiff(from, d) >= 0) return d; } return null; };
+  const add = (d, t, ic) => { if (!d) return; const diff = dayDiff(from, d); if (diff >= 0 && diff <= days) out.push({d, diff, e:{kind:'dday', title:t, who:'all', icon:ic, id:'w' + t}}); };
+  (F.people || []).forEach(p => { const elder = p.group === 'elder', nm = elder ? p.name + '님' : p.name;
+    if (!p.late && p.birth){ if (!p.lunar) add(nextOf(p.birth.slice(5)), nm + (elder ? ' 생신' : ' 생일'), '🎂'); else if (p.solar) add(new Date(p.solar + 'T00:00'), nm + (elder ? ' 생신' : ' 생일') + '(음력)', '🎂'); }
+    if (p.late && p.mday){ if (!p.mlunar) add(nextOf(p.mday), '故 ' + p.name + '님 기일', '🕯️'); else if (p.msolar) add(new Date(p.msolar + 'T00:00'), '故 ' + p.name + '님 기일(음력)', '🕯️'); } });
+  if (F.wedding){ const d = nextOf(F.wedding.slice(5)); if (d) add(d, '결혼기념일 ' + (d.getFullYear() - +F.wedding.slice(0,4)) + '주년', '💍'); }
+  (F.entries || []).forEach(e => { if (e.cat === 'annual' && e.md){ if (!e.lunar) add(nextOf(e.md), e.title, '📅'); else if (e.solar) add(new Date(e.solar + 'T00:00'), e.title + '(음력)', '📅'); }
+    if (e.cat === 'health' && e.next) add(new Date(e.next + 'T00:00'), '병원 예약 ' + (e.place || ''), '🩺'); });
+  return out;
 }
 
 /* ===== 홈 ===== */
@@ -525,7 +541,7 @@ function monthGrid(y, m, mini){
 }
 function upRow(u, del){
   const dd = u.d; const lbl = `${dd.getMonth()+1}/${dd.getDate()}(${DOW[dd.getDay()]})${u.e.time ? ' ' + u.e.time : ''}`;
-  const ic = u.e.kind === 'dday' ? '🎈' : (KIND[u.e.kind] || '🏠');
+  const ic = u.e.icon || (u.e.kind === 'dday' ? '🎈' : (KIND[u.e.kind] || '🏠'));
   return `<div class="dd"><span class="ic">${ic}</span><div class="x"><b>${esc(u.e.title)}</b><small>${lbl}${u.e.who !== 'all' ? ' · ' + esc(lab(u.e.who)) : ''}</small></div><span class="dot" style="background:${col(u.e.who)}"></span><span class="n">${u.diff === 0 ? '오늘' : 'D-' + u.diff}</span>${del && u.e.id && u.e.kind !== 'school' && u.e.kind !== 'dday' ? `<button class="del" data-del="${u.e.id}">🗑️</button>` : ''}</div>`;
 }
 function renderHomeCal(){
@@ -887,6 +903,7 @@ function applyNight(){ const m = new Date().getHours()*60 + new Date().getMinute
 let wake = null;
 async function keepAwake(){ if (!S.wake || !('wakeLock' in navigator) || document.hidden || wake) return; try { wake = await navigator.wakeLock.request('screen'); wake.addEventListener('release', () => wake = null); } catch(e){} }
 document.addEventListener('visibilitychange', () => { if (!document.hidden){ keepAwake(); tick(true); } });
+window.addEventListener('storage', e => { if (e.key === 'fb2_data') D = Object.assign(clone(DEF_DATA), LS.get('fb2_data', {})); if (e.key === 'fb2_set') S = Object.assign(clone(DEF_SET), LS.get('fb2_set', {})); if (['fb2_data','fb2_set','fw_data'].includes(e.key)) renderAll(); });
 document.addEventListener('click', () => keepAwake(), {passive:true});
 let lastMin = -1, lastDay = ymd(new Date());
 function tick(force){
