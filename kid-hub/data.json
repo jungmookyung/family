@@ -1,0 +1,63 @@
+{
+  "version": 2,
+  "app": "kid-hub",
+  "updatedAt": "2026-11-24T08:40:00+09:00",
+  "todos": [
+    {
+      "id": "t-20261124-01",
+      "title": "지우 배추뽑기 등원",
+      "note": "09:40 도보, 편한 복장·이불·여벌 바지",
+      "date": "2026-11-24",
+      "assignee": null,
+      "child": "지우",
+      "tags": ["#어린이집", "#준비물"],
+      "repeat": null,
+      "done": false
+    },
+    {
+      "id": "t-20261125-01",
+      "title": "지우 수료·졸업 사진 촬영일 확인",
+      "note": "25일 수 vs 26일 목",
+      "date": "2026-11-25",
+      "assignee": "우경",
+      "child": "지우",
+      "tags": ["#어린이집"],
+      "repeat": null,
+      "done": false
+    },
+    {
+      "id": "t-20261127-01",
+      "title": "빈 우유갑 모아 어린이집 보내기",
+      "note": null,
+      "date": "2026-11-27",
+      "assignee": null,
+      "child": "지우",
+      "tags": ["#어린이집", "#준비물"],
+      "repeat": null,
+      "done": false
+    }
+  ],
+  "events": [
+    {
+      "id": "e-20261126-01",
+      "title": "지우 11월 생일파티",
+      "date": "2026-11-26",
+      "time": null,
+      "endTime": null,
+      "child": "지우",
+      "tags": ["#어린이집"],
+      "note": null
+    }
+  ],
+  "experiences": [],
+  "people": [
+    { "id": "p-mg", "name": "무경", "role": "아빠", "emoji": "👨", "memo": "" },
+    { "id": "p-ug", "name": "우경", "role": "엄마", "emoji": "👩", "memo": "" },
+    { "id": "p-ju", "name": "지우", "role": "4살 · 어린이집", "emoji": "🧒", "memo": "" },
+    { "id": "p-jm", "name": "지민", "role": "2살 · 어린이집", "emoji": "👶", "memo": "" }
+  ],
+  "places": [
+    { "id": "pl-1", "name": "어린이집", "memo": "지우·지민 등원" },
+    { "id": "pl-2", "name": "소아과", "memo": "" }
+  ]
+}
